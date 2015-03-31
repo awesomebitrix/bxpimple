@@ -12,19 +12,19 @@ class BitrixProvider implements \Pimple\ServiceProviderInterface
 		//объект с приложением битрикса $APPLICATION
 		$pimple['application'] = function ($c) {
 			global $APPLICATION;
-    		return $APPLICATION;
+			return $APPLICATION;
 		};
 
 		//объект с пользователем битрикса $USER
-		$pimple['user'] = function ($c) {
+		$pimple['user'] = $container->factory(function ($c) {
 			global $USER;
-    		return $USER;
-		};
+			return $USER;
+		});
 
 		//объект с базой данных битрикса $DB
 		$pimple['db'] = function ($c) {
 			global $DB;
-    		return $DB;
+			return $DB;
 		};
 	}
 }
