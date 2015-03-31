@@ -16,7 +16,7 @@ class BitrixProvider implements \Pimple\ServiceProviderInterface
 		};
 
 		//объект с пользователем битрикса $USER
-		$pimple['user'] = $container->factory(function ($c) {
+		$pimple['user'] = $pimple->factory(function ($c) {
 			global $USER;
 			return $USER;
 		});
