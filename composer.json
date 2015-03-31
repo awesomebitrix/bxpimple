@@ -1,0 +1,23 @@
+{
+	"name": "marvin255/bxpimple",
+	"description": "Обертка pimple для 1c битрикс",
+	"version": "0.0.1",
+	"type": "library",
+	"keywords": ["php", "bitrix", "pimple"],
+	"license": "MIT",
+	"require": {
+		"php": ">=5.3.2"
+	},
+	"autoload": {
+		"psr-4": { "bx\\pimple\\": "lib/" }
+	},
+	"require": {
+		"pimple/pimple": "*"
+	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/marvin255/bxpimple"
+		}
+	]
+}
