@@ -84,26 +84,31 @@ class Locator
 	 * @param string $name
 	 * @param array $description
 	 */
-	public function registerService($name, array $description)
+	public function registerService($name, $description)
 	{
-		if (empty($description['class'])) return false;
+		if (!is_callable($description) || empty($description['class'])) return false;
 
 		$ioc = $this->getIoC();
-		$ioc[$name] = function ($c) use ($description) {
-			$class = $description['class'];
-			$configItem = $description;
-			unset($configItem['class']);
-			$item = new $class;
-			foreach ($configItem as $key => $value) {
-				if (property_exists($item, $key)) {
-					$item->$key = $value;
-				} elseif (method_exists($item, 'set' . ucfirst($key))) {
-					$method = 'set' . ucfirst($key);
-					$item->$method($value);
+
+		if (!is_callable($description)) {
+			$ioc[$name] = $description;
+		} else {
+			$ioc[$name] = function ($c) use ($description) {
+				$class = $description['class'];
+				$configItem = $description;
+				unset($configItem['class']);
+				$item = new $class;
+				foreach ($configItem as $key => $value) {
+					if (property_exists($item, $key)) {
+						$item->$key = $value;
+					} elseif (method_exists($item, 'set' . ucfirst($key))) {
+						$method = 'set' . ucfirst($key);
+						$item->$method($value);
+					}
 				}
-			}
-			return $item;
-		};
+				return $item;
+			};
+		}
 
 		return true;
 	}
