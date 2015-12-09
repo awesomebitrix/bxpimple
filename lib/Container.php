@@ -55,7 +55,7 @@ class Container
 					foreach ($configItem as $key => $value) {
 						if (property_exists($item, $key)) {
 							$item->$key = $value;
-						} else if (method_exists($item, 'set' . ucfirst($key))) {
+						} elseif (method_exists($item, 'set' . ucfirst($key))) {
 							$method = 'set' . ucfirst($key);
 							$item->$method($value);
 						}
