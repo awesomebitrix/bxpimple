@@ -66,6 +66,19 @@ class Locator
 		$ioc[$name] = $constructor;
 	}
 
+
+	/**
+	 * Задает несколько фабрик из массива
+	 * @param array $factories
+	 */
+	public function registerFactories(array $factories)
+	{
+		foreach ($factories as $name => $constructor) {
+			$this->registerFactory($name, $constructor);
+		}
+	}
+
+
 	/**
 	 * Задает сервис для pimple
 	 * @param string $name
