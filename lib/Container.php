@@ -1,6 +1,6 @@
 <?php
 
-namespace bx\pimple;
+namespace bxpimple;
 
 /**
  * Обертка для pimple для битрикса. Реализует singleton для вызова контейнера.

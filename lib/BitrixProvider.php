@@ -1,6 +1,6 @@
 <?php
 
-namespace bx\pimple;
+namespace bxpimple;
 
 /**
  * Контейнер с зависимостями для битрикса
