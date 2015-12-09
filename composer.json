@@ -1,7 +1,6 @@
 {
 	"name": "marvin255/bxpimple",
 	"description": "Обертка pimple для 1c битрикс",
-	"version": "0.0.1",
 	"type": "library",
 	"keywords": ["php", "bitrix", "pimple"],
 	"license": "MIT",
