@@ -5,12 +5,17 @@ namespace bxpimple;
 /**
  * Обертка для pimple для битрикса. Реализует singleton для вызова контейнера.
  */
-class Container
+class Locator
 {
 	/**
 	 * @var ServiceLocator Объект для singleton шаблона
 	 */
-	public static $c = null;
+	public static $item = null;
+	/**
+	 * @var \Pimple\Container
+	 */
+	protected $_IoC = null;
+
 
 
 	private function __construct()
@@ -26,51 +31,106 @@ class Container
 	}
 
 
+
 	/**
-	 * Задает объект pimple, если его требуется кастомизировать
-	 * @param \Pimple\Container $pimple
+	 * Возращает объект приложения
+	 * @return \bxpimple\ApplicationContainer
 	 */
-	public static function set(\Pimple\Container $pimple)
+	public static function init(\Pimple\Container $pimple)
 	{
-		static::$c = $pimple;
+		self::$item = new self;
+		self::$item->setIoC($pimple);
 	}
+
+
+
+	/**
+	 * Возвращает инициированный объект
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function get($name)
+	{
+		$ioc = $this->getIoC();
+		return $ioc[$name];
+	}
+
+	/**
+	 * Задает фабрику для создания объектов
+	 * @param string $name
+	 * @param callable $constructor
+	 */
+	public function registerFactory($name, $constructor)
+	{
+		$ioc = $this->getIoC();
+		$ioc[$name] = $constructor;
+	}
+
+	/**
+	 * Задает сервис для pimple
+	 * @param string $name
+	 * @param array $description
+	 */
+	public function registerService($name, array $description)
+	{
+		if (empty($description['class'])) return false;
+
+		$ioc = $this->getIoC();
+		$ioc[$name] = function ($c) use ($description) {
+			$class = $description['class'];
+			$configItem = $description;
+			unset($configItem['class']);
+			$item = new $class;
+			foreach ($configItem as $key => $value) {
+				if (property_exists($item, $key)) {
+					$item->$key = $value;
+				} elseif (method_exists($item, 'set' . ucfirst($key))) {
+					$method = 'set' . ucfirst($key);
+					$item->$method($value);
+				}
+			}
+			return $item;
+		};
+
+		return true;
+	}
+
 
 	/**
 	 * Задает сервисы для pimple через массив
 	 * @param array $services
 	 */
-	public static function registerServices(array $services)
+	public function registerServices(array $services)
 	{
-		foreach ($services as $name => $config) {
-
-			if (empty($config) || (is_array($config) && empty($config['class']))) continue;
-
-			static::$c[$name] = function ($c) use ($config) {
-				$item = null;
-				if (is_array($config)) {
-					$class = $config['class'];
-					$configItem = $config;
-					unset($configItem['class']);
-					$item = new $class;
-					foreach ($configItem as $key => $value) {
-						if (property_exists($item, $key)) {
-							$item->$key = $value;
-						} elseif (method_exists($item, 'set' . ucfirst($key))) {
-							$method = 'set' . ucfirst($key);
-							$item->$method($value);
-						}
-					}
-				} else {
-					$item = new $config;
-				}
-				return $item;
-			};
-			
+		foreach ($services as $name => $description) {
+			$this->registerService($name, $description);
 		}
+	}
+
+
+	/**
+	 * Задает объект pimple
+	 * @param \Pimple\Container $pimple
+	 */
+	public function setIoC(\Pimple\Container $pimple)
+	{
+		$this->_IoC = $pimple;
+	}
+
+
+	/**
+	 * Возвращаеть объект pimple
+	 * @return \Pimple\Container
+	 */
+	public function getIoC()
+	{
+		return $this->_IoC;
 	}
 }
 
 
+
 $container = new \Pimple\Container;
 $container->register(new BitrixProvider);
-Container::set($container);
+
+Locator::init($container);
