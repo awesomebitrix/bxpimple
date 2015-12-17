@@ -86,11 +86,11 @@ class Locator
 	 */
 	public function registerService($name, $description)
 	{
-		if (!is_callable($description) || empty($description['class'])) return false;
+		if (!is_callable($description) && empty($description['class'])) return false;
 
 		$ioc = $this->getIoC();
 
-		if (!is_callable($description)) {
+		if (is_callable($description)) {
 			$ioc[$name] = $description;
 		} else {
 			$ioc[$name] = function ($c) use ($description) {
