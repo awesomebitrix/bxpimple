@@ -63,7 +63,7 @@ class Locator
 	public function registerFactory($name, $constructor)
 	{
 		$ioc = $this->getIoC();
-		$ioc[$name] = $constructor;
+		$ioc[$name] = $ioc->factory($constructor);
 	}
 
 
