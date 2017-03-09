@@ -8,7 +8,7 @@ namespace bxpimple;
 class Locator
 {
 	/**
-	 * @var ServiceLocator Объект для singleton шаблона
+	 * @var Locator Объект для singleton шаблона
 	 */
 	public static $item = null;
 	/**
